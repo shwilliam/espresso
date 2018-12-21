@@ -11,7 +11,7 @@
   <script type='text/javascript'>
     const coffeeData = [
       {
-        name: 'espresso',
+        name: 'Espresso',
         parts: [
           {
             name: 'espresso',
@@ -21,7 +21,7 @@
         ]
       },
       {
-        name: 'latte',
+        name: 'Café au lait',
         parts: [
           {
             name: 'espresso',
@@ -29,14 +29,69 @@
             order: 1,
           },
           {
-            name: 'milk',
-            percent: 65,
+            name: 'steamed milk',
+            percent: 60,
+            order: 2,
+          },
+          {
+            name: 'milk foam',
+            percent: 9,
+            order: 3,
+          },
+        ]
+      },
+      {
+        name: 'Cappuccino',
+        parts: [
+          {
+            name: 'espresso',
+            percent: 30,
+            order: 1,
+          },
+          {
+            name: 'steamed milk',
+            percent: 30,
+            order: 2,
+          },
+          {
+            name: 'milk foam',
+            percent: 39,
+            order: 3,
+          },
+        ]
+      },
+      {
+        name: 'Caffé Americano',
+        parts: [
+          {
+            name: 'espresso',
+            percent: 30,
+            order: 1,
+          },
+          {
+            name: 'hot water',
+            percent: 69,
             order: 2,
           },
         ]
       },
       {
-        name: 'cappuccino',
+        name: 'Long Black',
+        parts: [
+          {
+            name: 'hot water',
+            percent: 60,
+            order: 1,
+          },
+          {
+            name: 'espresso',
+            percent: 39,
+            order: 2,
+          },
+        ]
+      },
+      {
+        name: 'Espresso Macchiato',
         parts: [
           {
             name: 'espresso',
@@ -44,14 +99,64 @@
             order: 1,
           },
           {
-            name: 'milk',
-            percent: 50,
+            name: 'milk foam',
+            percent: 15,
+            order: 2,
+          },
+        ]
+      },
+      {
+        name: 'Caffé Mocha',
+        parts: [
+          {
+            name: 'espresso',
+            percent: 30,
+            order: 1,
+          },
+          {
+            name: 'chocolate syrup',
+            percent: 15,
             order: 2,
           },
           {
-            name: 'foam',
-            percent: 15,
+            name: 'steamed milk',
+            percent: 30,
             order: 3,
+          },
+          {
+            name: 'whipped cream',
+            percent: 24,
+            order: 4,
+          },
+        ]
+      },
+      {
+        name: 'Flat White',
+        parts: [
+          {
+            name: 'espresso',
+            percent: 30,
+            order: 1,
+          },
+          {
+            name: 'steamed milk',
+            percent: 69,
+            order: 2,
+          },
+        ]
+      },
+      {
+        name: 'Espresso con Panna',
+        parts: [
+          {
+            name: 'espresso',
+            percent: 30,
+            order: 1,
+          },
+          {
+            name: 'whipped cream',
+            percent: 40,
+            order: 2,
           },
         ]
       },
@@ -63,8 +168,11 @@
     const ingredientColors = {
       fill: '#FFFFFF',
       espresso: '#4E2A2A',
-      milk: '#F5E4C0',
-      foam: '#FCF6EA',
+      'steamed milk': '#F5E4C0',
+      'milk foam': '#FCF6EA',
+      'hot water': '#ADD8E6',
+      'whipped cream': '#FFFFCC',
+      'chocolate syrup': '#2B1D0E',
     }
 
     const sketchyCup = 'M2.571,0.995l283.056,-0.495c0,0 6.865,80.632 -22.954,129.715c-20.753,34.161 -90.988,44.55 -127.015,44.451c-88.428,-0.244 -147.118,-32.034 -133.087,-173.671Z'
