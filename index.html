@@ -3,11 +3,13 @@
 
 <head>
   <meta charset='UTF-8'>
-  <title>espresso</title>
+  <title>☕☕☕☕</title>
   <script src='https://d3js.org/d3.v5.min.js'></script>
 </head>
 
 <body>
+  <div id='coffee-shop'></div>
+
   <script type='text/javascript'>
     const coffeeData = [
       {
@@ -35,7 +37,7 @@
           },
           {
             name: 'milk foam',
-            percent: 9,
+            percent: 10,
             order: 3,
           },
         ]
@@ -55,7 +57,7 @@
           },
           {
             name: 'milk foam',
-            percent: 39,
+            percent: 40,
             order: 3,
           },
         ]
@@ -70,7 +72,7 @@
           },
           {
             name: 'hot water',
-            percent: 69,
+            percent: 70,
             order: 2,
           },
         ]
@@ -85,7 +87,7 @@
           },
           {
             name: 'espresso',
-            percent: 39,
+            percent: 40,
             order: 2,
           },
         ]
@@ -125,7 +127,7 @@
           },
           {
             name: 'whipped cream',
-            percent: 24,
+            percent: 25,
             order: 4,
           },
         ]
@@ -140,7 +142,7 @@
           },
           {
             name: 'steamed milk',
-            percent: 69,
+            percent: 70,
             order: 2,
           },
         ]
@@ -162,8 +164,8 @@
       },
     ]
 
-    const drinkWidth = 300
-    const drinkHeight = 400
+    const drinkWidth = 260
+    const drinkHeight = 160
 
     const ingredientColors = {
       fill: '#FFFFFF',
@@ -175,9 +177,10 @@
       'chocolate syrup': '#2B1D0E',
     }
 
-    const sketchyCup = 'M2.571,0.995l283.056,-0.495c0,0 6.865,80.632 -22.954,129.715c-20.753,34.161 -90.988,44.55 -127.015,44.451c-88.428,-0.244 -147.118,-32.034 -133.087,-173.671Z'
+    const cupPath = 'M1,1c0,0 0,58.318 0,101.32c0,11.934 4.741,23.38 13.18,31.819c8.439,8.44 19.885,13.181 31.82,13.181c37.992,0 92.118,0 130.11,0c11.935,0 23.381,-4.741 31.82,-13.181c8.439,-8.439 13.18,-19.885 13.18,-31.819c0,-43.002 0,-101.32 0,-101.32'
+    const lidPath = 'M1,2.001l220.11,0'
+    const handlePath = 'M221.766,1.998c19.841,0 35.949,16.108 35.949,35.949c0,19.841 -16.108,35.949 -35.949,35.949c-19.841,0 -35.949,-16.108 -35.949,-35.949c0,-19.841 16.108,-35.949 35.949,-35.949Zm0,17.975c9.92,0 17.974,8.054 17.974,17.974c0,9.92 -8.054,17.974 -17.974,17.974c-9.92,0 -17.974,-8.054 -17.974,-17.974c0,-9.92 8.054,-17.974 17.974,-17.974Z'
 
-    // add fill
     coffeeData.forEach((coffee) => {
       let totalPercent = 0
       let maxOrderInt = 0
@@ -185,13 +188,11 @@
         totalPercent += part.percent
         if (part.order > maxOrderInt) maxOrderInt = part.order
       })
-      if (totalPercent < 100) {
-        coffee.parts.push({
-          name: 'fill',
-          percent: 101 - totalPercent,
-          order: maxOrderInt + 1
-        })
-      }
+      coffee.parts.push({
+        name: 'fill',
+        percent: 100 - totalPercent,
+        order: maxOrderInt + 1
+      })
     })
 
     coffeeData.forEach((coffee) => {
@@ -213,9 +214,9 @@
       })
     })
 
-    const body = d3.select('body')
+    const container = d3.select('#coffee-shop')
 
-    const svg = body.append('svg')
+    const svg = container.append('svg')
       .attr('width', drinkWidth)
       .attr('height', drinkHeight * coffeeData.length)
 
@@ -227,6 +228,8 @@
 
     const height = +svg.attr('height') - margin.top - margin.bottom
 
+    const drinkTransition = 2000
+
     const drink = svg
       .selectAll('.coffee')
       .data(coffeeData)
@@ -237,11 +240,42 @@
 
     drink
       .append('path')
-      .attr('d', sketchyCup)
+      .attr('d', cupPath)
+      .attr('stroke-width', '2px')
       .style('stroke', '#FFFFFF')
       .style('fill', (d, i) => 'url(#grad' + i + ')')
       .transition()
-      .duration(2000)
+      .duration(drinkTransition)
+      .style('stroke', '#000000')
+
+    drink
+      .append('path')
+      .attr('d', lidPath)
+      .attr('stroke-width', '2px')
+      .style('stroke', '#FFFFFF')
+      .transition()
+      .duration(drinkTransition)
+      .style('stroke', '#000000')
+
+    drink
+      .append('clipPath')
+      .attr('id', (d, i) => `clip${i}`)
+      .append('rect')
+      .attr('x', 222.1)
+      .attr('y', -0.459)
+      .attr('width', 38.149)
+      .attr('height', 77.41)
+
+    drink
+      .append('g')
+      .attr('clip-path', (d, i) => `url(#clip${i})`)
+      .append('path')
+      .attr('d', handlePath)
+      .attr('stroke-width', '2px')
+      .style('stroke', '#FFFFFF')
+      .style('fill', 'none')
+      .transition()
+      .duration(drinkTransition)
       .style('stroke', '#000000')
 
     const gradient = svg.append('defs')
