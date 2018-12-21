@@ -1,15 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 
 <head>
-  <meta charset="UTF-8">
+  <meta charset='UTF-8'>
   <title>espresso</title>
-  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src='https://d3js.org/d3.v5.min.js'></script>
 </head>
 
 <body>
-  <script type="text/javascript">
-    console.log('hello world')
+  <script type='text/javascript'>
+    const coffeeData = [
+      {
+        name: 'espresso',
+        parts: [
+          {
+            name: 'espresso',
+            percent: 30,
+            order: 1,  // bottom -> top
+          },
+        ]
+      },
+      {
+        name: 'latte',
+        parts: [
+          {
+            name: 'espresso',
+            percent: 30,
+            order: 1,
+          },
+          {
+            name: 'milk',
+            percent: 65,
+            order: 2,
+          },
+        ]
+      },
+      {
+        name: 'cappuccino',
+        parts: [
+          {
+            name: 'espresso',
+            percent: 30,
+            order: 1,
+          },
+          {
+            name: 'milk',
+            percent: 50,
+            order: 2,
+          },
+          {
+            name: 'foam',
+            percent: 15,
+            order: 3,
+          },
+        ]
+      },
+    ]
+
+    const drinkWidth = 300
+    const drinkHeight = 400
+
+    const ingredientColors = {
+      fill: '#FFFFFF',
+      espresso: '#4E2A2A',
+      milk: '#F5E4C0',
+      foam: '#FCF6EA',
+    }
+
+    const sketchyCup = 'M2.571,0.995l283.056,-0.495c0,0 6.865,80.632 -22.954,129.715c-20.753,34.161 -90.988,44.55 -127.015,44.451c-88.428,-0.244 -147.118,-32.034 -133.087,-173.671Z'
+
+    // add fill
+    coffeeData.forEach((coffee) => {
+      let totalPercent = 0
+      let maxOrderInt = 0
+      coffee.parts.forEach((part) => {
+        totalPercent += part.percent
+        if (part.order > maxOrderInt) maxOrderInt = part.order
+      })
+      if (totalPercent < 100) {
+        coffee.parts.push({
+          name: 'fill',
+          percent: 101 - totalPercent,
+          order: maxOrderInt + 1
+        })
+      }
+    })
+
+    coffeeData.forEach((coffee) => {
+      let totalPercent = 0
+      coffee.layers = []
+      coffee.parts.sort((a, b) => b.order - a.order)
+      coffee.parts.forEach((part) => {
+        part.startPercent = totalPercent
+        coffee.layers.push({
+          percent: totalPercent,
+          color: ingredientColors[part.name],
+        })
+        totalPercent += part.percent
+        part.endPercent = totalPercent
+        coffee.layers.push({
+          percent: totalPercent,
+          color: ingredientColors[part.name],
+        })
+      })
+    })
+
+    const body = d3.select('body')
+
+    const svg = body.append('svg')
+      .attr('width', drinkWidth)
+      .attr('height', drinkHeight * coffeeData.length)
+
+    const margin = {
+      top: 20, right: 20, bottom: 20, left: 20,
+    }
+
+    const width = +svg.attr('width') - margin.left - margin.right
+
+    const height = +svg.attr('height') - margin.top - margin.bottom
+
+    const drink = svg
+      .selectAll('.coffee')
+      .data(coffeeData)
+      .enter()
+      .append('g')
+      .attr('class', 'coffee')
+      .attr('transform', (d, i) => `translate(0,${i * drinkHeight})`)
+
+    drink
+      .append('path')
+      .attr('d', sketchyCup)
+      .style('stroke', '#FFFFFF')
+      .style('fill', (d, i) => 'url(#grad' + i + ')')
+      .transition()
+      .duration(2000)
+      .style('stroke', '#000000')
+
+    const gradient = svg.append('defs')
+      .selectAll('linearGradient')
+      .data(coffeeData)
+      .enter()
+      .append('linearGradient')
+      .attr('id', (d, i) => 'grad' + i)
+      .attr('x1', '0%')
+      .attr('x2', '0%')
+      .attr('y1', '0%')
+      .attr('y2', '100%')
+
+    const color = gradient.selectAll('.color')
+      .data(d => d.layers)
+      .enter()
+      .append('stop')
+      .attr('offset', '100%')
+      .style('stop-color', d => d.color)
+      .transition()
+      .duration(2000)
+      .attr('offset', d => d.percent + '%')
   </script>
 </body>
 
