@@ -5,6 +5,14 @@
   <meta charset='UTF-8'>
   <title>☕☕☕☕</title>
   <script src='https://d3js.org/d3.v5.min.js'></script>
+  <style>
+    html, body {
+      margin: 0;
+      max-width: 100%;
+      overflow-x: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+  </style>
 </head>
 
 <body>
@@ -164,8 +172,9 @@
       },
     ]
 
-    const drinkWidth = 260
-    const drinkHeight = 160
+    const drinkWidth = 310
+    const drinkHeight = 200
+    const topPadding = 100
 
     const ingredientColors = {
       fill: '#FFFFFF',
@@ -214,19 +223,20 @@
       })
     })
 
+    const bodyWidth = document.body.clientWidth
+    const containerPadding = (bodyWidth % drinkWidth) / 2
+    const drinksPerRow = Math.floor(bodyWidth / drinkWidth)
+    const width = drinkWidth * drinksPerRow
+    const height = (drinkHeight + topPadding) * Math.ceil(coffeeData.length / drinksPerRow)
+
     const container = d3.select('#coffee-shop')
+    container
+      .style('padding-left', `${containerPadding}px`)
+      .style('padding-right', `${containerPadding}px`)
 
     const svg = container.append('svg')
-      .attr('width', drinkWidth)
-      .attr('height', drinkHeight * coffeeData.length)
-
-    const margin = {
-      top: 20, right: 20, bottom: 20, left: 20,
-    }
-
-    const width = +svg.attr('width') - margin.left - margin.right
-
-    const height = +svg.attr('height') - margin.top - margin.bottom
+      .attr('width', width)
+      .attr('height', height)
 
     const drinkTransition = 2000
 
@@ -236,7 +246,19 @@
       .enter()
       .append('g')
       .attr('class', 'coffee')
-      .attr('transform', (d, i) => `translate(0,${i * drinkHeight})`)
+      .attr('data-coffee', d => d.name.split(' ').join('-'))
+      .attr('transform', (d, i) => `
+        translate(${((i) % drinksPerRow) * drinkWidth},${Math.floor(i / drinksPerRow) * drinkHeight + ((Math.floor(i / drinksPerRow) + 1) * topPadding)})
+      `)
+
+    drink
+      .append('text')
+      .text(d => d.name)
+      .style('text-anchor', 'middle')
+      .attr('x', 114.4)
+      .attr('y', -20)
+      .style('font-size', '18px')
+      .style('font-weight', 600)
 
     drink
       .append('path')
@@ -278,6 +300,33 @@
       .duration(drinkTransition)
       .style('stroke', '#000000')
 
+    const label = drink
+      .selectAll('.label')
+      .data(d => d.parts.filter(part => part.name !== 'fill'))
+      .enter()
+      .append('g')
+      .style('width', 200)
+      .append('text')
+      .attr('class', 'label')
+      .text(d => d.name)
+      .style('opacity', 0)
+      .style('text-anchor', 'middle')
+      .attr('x', 114.4)
+      .attr('y', (d, i) => ((((d.startPercent + (d.percent / 2)) / 100) * 145) + 8) || 0)
+
+    drink
+      .on('mouseover', function (d, i) {
+        const coffeeIndex = i
+        d3.selectAll('.coffee')
+          .filter((d, i) => coffeeIndex === i)
+          .selectAll('.label')
+          .style('opacity', 1)
+      })
+      .on('mouseout', function (d, i) {
+        d3.selectAll('.label')
+          .style('opacity', 0)
+      })
+
     const gradient = svg.append('defs')
       .selectAll('linearGradient')
       .data(coffeeData)
@@ -289,7 +338,7 @@
       .attr('y1', '0%')
       .attr('y2', '100%')
 
-    const color = gradient.selectAll('.color')
+    gradient.selectAll('.color')
       .data(d => d.layers)
       .enter()
       .append('stop')
