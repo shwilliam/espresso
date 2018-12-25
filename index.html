@@ -10,6 +10,7 @@
     html, body {
       margin: 0;
       max-width: 100%;
+      min-width: 300px;
       background-color: #FDFAF1;
       overflow-x: hidden;
       font-family: 'Space Mono', monospace;
@@ -30,12 +31,15 @@
     h2 {
       font-size: 16px;
     }
+    h2 {
+      padding: 0 30px;
+    }
   </style>
 </head>
 
 <body>
   <h1>espresso</h1>
-  <h2>a visualization of common espresso coffees</h2>
+  <h2>a visualization of common espresso&nbsp;coffees</h2>
   <div id='coffee-shop'></div>
 
   <script type='text/javascript'>
@@ -197,13 +201,13 @@
     const topPadding = 100
 
     const ingredientColors = {
-      fill: '#FDFAF1',
-      espresso: '#4E2A2A',
-      'steamed milk': '#F5E4C0',
-      'milk foam': '#FCF6EA',
-      'hot water': '#ADD8E6',
-      'whipped cream': '#FFFFCC',
-      'chocolate syrup': '#2B1D0E',
+      fill: '#fdfaf1',
+      espresso: '#9f8574',
+      'steamed milk': '#f9f1d7',
+      'milk foam': '#fbf5e5',
+      'whipped cream': '#fff8dc',
+      'hot water': '#c4e3ed',
+      'chocolate syrup': '#947866',
     }
 
     const cupPath = 'M1,1c0,0 0,58.318 0,101.32c0,11.934 4.741,23.38 13.18,31.819c8.439,8.44 19.885,13.181 31.82,13.181c37.992,0 92.118,0 130.11,0c11.935,0 23.381,-4.741 31.82,-13.181c8.439,-8.439 13.18,-19.885 13.18,-31.819c0,-43.002 0,-101.32 0,-101.32'
@@ -244,7 +248,7 @@
     })
 
     const draw = () => {
-      const bodyWidth = document.body.clientWidth
+      const bodyWidth = document.body.clientWidth > 310 ? document.body.clientWidth : 310
       const containerPadding = (bodyWidth % drinkWidth) / 2
       const drinksPerRow = Math.floor(bodyWidth / drinkWidth)
       const width = drinkWidth * drinksPerRow
@@ -269,13 +273,14 @@
         .attr('class', 'coffee')
         .attr('data-coffee', d => d.name.split(' ').join('-'))
         .attr('transform', (d, i) => `
-          translate(${((i) % drinksPerRow) * drinkWidth},${Math.floor(i / drinksPerRow) * drinkHeight + ((Math.floor(i / drinksPerRow) + 1) * topPadding)})
+          translate(${((i) % drinksPerRow) * drinkWidth + 20},${Math.floor(i / drinksPerRow) * drinkHeight + ((Math.floor(i / drinksPerRow) + 1) * topPadding)})
         `)
 
       drink
         .append('text')
         .text(d => d.name)
         .style('text-anchor', 'middle')
+        .style('pointer-events', 'none')
         .attr('x', 114.4)
         .attr('y', -20)
         .style('font-size', '18px')
